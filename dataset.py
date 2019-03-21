@@ -26,7 +26,7 @@ class DogsDataset(Dataset):
     def __getitem__(self, idx):
         img_name = os.path.join(self.img_dir, self.labels_frame.id[idx]) + ".jpg"
         image = Image.open(img_name)
-        label = self.labels_frame.breed[idx]
+        label = self.labels_frame.target[idx]
 
         if self.transform:
             image = self.transform(image)
@@ -36,6 +36,9 @@ class DogsDataset(Dataset):
 def split_train_val(root_dir, train_size=0.8, train_transform=None, val_transform=None):
     dframe = pd.read_csv('labels.csv')
     labelnames = pd.read_csv('sample_submission.csv').keys()[1:]
+    codes = range(len(labelnames))
+    breed_to_code = dict(zip(labelnames, codes))
+    dframe['target'] = [breed_to_code[x] for x in dframe.breed]
 
     cut = int(len(dframe)*train_size)
     train, val = np.split(dframe, [cut], axis=0)
