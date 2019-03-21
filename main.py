@@ -16,7 +16,8 @@ from dataset import split_train_val
 dataset_sizes = {}
 dataloaders = {}
 image_datasets = {}
-device = None
+device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+use_gpu = torch.cuda.is_available()
 
 def train_model(model, criterion, optimizer, scheduler, num_epochs=25):
     since = time.time()
@@ -24,7 +25,6 @@ def train_model(model, criterion, optimizer, scheduler, num_epochs=25):
     best_model_wts = model.state_dict()
     best_acc = 0.0
 
-    use_gpu = torch.cuda.is_available()
     FloatTensor = torch.cuda.FloatTensor if use_gpu else torch.FloatTensor
     LongTensor = torch.cuda.LongTensor if use_gpu else torch.LongTensor
     ByteTensor = torch.cuda.ByteTensor if use_gpu else torch.ByteTensor
@@ -124,7 +124,6 @@ def init_data():
 
 def main():
     init_data()
-    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 if __name__ == '__main__':
     main()
