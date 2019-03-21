@@ -93,7 +93,7 @@ def train_model(model, criterion, optimizer, scheduler, num_epochs=25):
     model.load_state_dict(best_model_wts)
     return model
 
-def main():
+def init_data():
     global dataloaders
     global dataset_sizes
     global image_datasets
@@ -120,9 +120,11 @@ def main():
                   for x in ['train', 'val']}
     dataset_sizes = {x: len(image_datasets[x]) for x in ['train', 'val']}
 
-    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-
     return dataloaders
+
+def main():
+    init_data()
+    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 if __name__ == '__main__':
     main()
