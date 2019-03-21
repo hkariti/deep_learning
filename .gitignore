@@ -4,3 +4,8 @@
 *.log
 __pycache__
 *.pyc
+
+# data
+*.csv
+test
+train
