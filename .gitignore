@@ -1,0 +1,6 @@
+.*.swp
+.vagrant
+*.out
+*.log
+__pycache__
+*.pyc
