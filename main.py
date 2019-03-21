@@ -71,7 +71,7 @@ def train_model(model, criterion, optimizer, scheduler, num_epochs=25):
                 running_loss += loss.data.item()
                 running_corrects += torch.sum(preds == labels.data)
 
-            epoch_loss = running_loss.type(FloatTensor) / len(image_datasets[phase])
+            epoch_loss = running_loss / len(image_datasets[phase])
             epoch_acc = running_corrects.type(FloatTensor) / len(image_datasets[phase])
 
             time_elapsed_epoch = time.time() - since_epoch
