@@ -164,6 +164,8 @@ def main():
     init_data()
 
     model = models.resnet34(pretrained=True)
+    if use_gpu:
+        model.cuda()
     train_fc(model)
 
 if __name__ == '__main__':
