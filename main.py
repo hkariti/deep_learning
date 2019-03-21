@@ -51,8 +51,8 @@ def train_model(model, criterion, optimizer, scheduler, num_epochs=25):
                 # get the inputs
                 inputs, labels = data
 
-                inputs = Variable(inputs.type(Tensor))
-                labels = Variable(labels.type(LongTensor))
+                inputs = inputs.to(device)
+                labels = labels.to(device)
 
                 # zero the parameter gradients
                 optimizer.zero_grad()
