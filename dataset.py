@@ -43,6 +43,7 @@ def split_train_val(root_dir, train_size=0.8, train_transform=None, val_transfor
 
     train, val = train_test_split(dframe, train_size=train_size)
     val = val.reset_index(drop=True)
+    train = train.reset_index(drop=True)
 
     train_set = DogsDataset(root_dir, train, train_transform)
     val_set = DogsDataset(root_dir, val, val_transform)
