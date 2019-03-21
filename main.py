@@ -11,7 +11,7 @@ import torchvision
 from torchvision import datasets, models, transforms
 import matplotlib.pyplot as plt
 
-from dataset import split_train_val
+from .dataset import split_train_val
 
 dataset_sizes = {}
 dataloaders = {}
