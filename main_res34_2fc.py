@@ -162,7 +162,7 @@ def train_fc(model):
 
     # Observe that only parameters of final layer are being optimized as
     # opposed to before.
-    optimizer_conv = optim.SGD(model.fc.parameters(), lr=0.001, momentum=0.9)
+    optimizer_conv = optim.SGD(filter( lambda p: p.requries_grad, model.parameters() ), lr=0.001, momentum=0.9)
 
     # Decay LR by a factor of 0.1 every 7 epochs
     exp_lr_scheduler = lr_scheduler.StepLR(optimizer_conv, step_size=7, gamma=0.1)
