@@ -68,7 +68,7 @@ def train_model(model, criterion, optimizer, scheduler, num_epochs=25):
                     optimizer.step()
                     
                 # statistics
-                running_loss += loss.data[0]
+                running_loss += loss.data.item()
                 running_corrects += torch.sum(preds == labels.data)
 
             epoch_loss = running_loss / len(image_datasets[phase])
@@ -122,24 +122,49 @@ def init_data():
 
     return dataloaders
 
-def main():
-    init_data()
-
-    model_ft = models.resnet34(pretrained=True)
-    num_ftrs = model_ft.fc.in_features
-    model_ft.fc = nn.Linear(num_ftrs, 120)
+def finetune(model):
+    num_ftrs = model.fc.in_features
+    model.fc = nn.Linear(num_ftrs, 120)
 
     criterion = nn.CrossEntropyLoss()
 
     # Observe that all parameters are being optimized
-    optimizer_ft = optim.SGD(model_ft.parameters(), lr=0.001, momentum=0.9)
+    optimizer_ft = optim.SGD(model.parameters(), lr=0.001, momentum=0.9)
 
     # Decay LR by a factor of 0.1 every 7 epochs
     exp_lr_scheduler = lr_scheduler.StepLR(optimizer_ft, step_size=7, gamma=0.1)
 
-    model_ft = train_model(model_ft, criterion, optimizer_ft, exp_lr_scheduler,
+    model = train_model(model_ft, criterion, optimizer_ft, exp_lr_scheduler,
                            num_epochs=25)
-    return model_ft
+    return model
+
+def train_fc(model):
+    for param in model.parameters():
+        param.requires_grad = False
+
+    # Parameters of newly constructed modules have requires_grad=True by default
+    num_ftrs = model.fc.in_features
+    model.fc = nn.Linear(num_ftrs, 120)
+
+    criterion = nn.CrossEntropyLoss()
+
+    # Observe that only parameters of final layer are being optimized as
+    # opposed to before.
+    optimizer_conv = optim.SGD(model.fc.parameters(), lr=0.001, momentum=0.9)
+
+    # Decay LR by a factor of 0.1 every 7 epochs
+    exp_lr_scheduler = lr_scheduler.StepLR(optimizer_conv, step_size=7, gamma=0.1)
+
+    model = train_model(model, criterion, optimizer_conv,
+                        exp_lr_scheduler, num_epochs=25)
+
+    return model
+
+def main():
+    init_data()
+
+    model = models.resnet34(pretrained=True)
+    train_fc(model)
 
 if __name__ == '__main__':
     main()
