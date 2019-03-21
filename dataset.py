@@ -3,6 +3,7 @@ from torch.utils.data import Dataset
 from PIL import Image
 import pandas as pd
 import numpy as np
+from sklearn.model_selection import train_test_split
 
 class DogsDataset(Dataset):
     """Dog breed identification dataset."""
@@ -40,8 +41,7 @@ def split_train_val(root_dir, train_size=0.8, train_transform=None, val_transfor
     breed_to_code = dict(zip(labelnames, codes))
     dframe['target'] = [breed_to_code[x] for x in dframe.breed]
 
-    cut = int(len(dframe)*train_size)
-    train, val = np.split(dframe, [cut], axis=0)
+    train, val = train_test_split(dframe, train_size=train_size)
     val = val.reset_index(drop=True)
 
     train_set = DogsDataset(root_dir, train, train_transform)
