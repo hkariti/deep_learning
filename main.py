@@ -126,6 +126,7 @@ def finetune(model):
     num_ftrs = model.fc.in_features
     model.fc = nn.Linear(num_ftrs, 120)
 
+    model = model.to(device)
     criterion = nn.CrossEntropyLoss()
 
     # Observe that all parameters are being optimized
@@ -146,6 +147,7 @@ def train_fc(model):
     num_ftrs = model.fc.in_features
     model.fc = nn.Linear(num_ftrs, 120)
 
+    model = model.to(device)
     criterion = nn.CrossEntropyLoss()
 
     # Observe that only parameters of final layer are being optimized as
@@ -164,8 +166,6 @@ def main():
     init_data()
 
     model = models.resnet34(pretrained=True)
-    if use_gpu:
-        model.cuda()
     train_fc(model)
 
 if __name__ == '__main__':
