@@ -1,9 +1,12 @@
 import os
-from torch.utils.data import Dataset
 from PIL import Image
 import pandas as pd
 import numpy as np
 from sklearn.model_selection import train_test_split
+import torchvision
+from torchvision import datasets, models, transforms
+from torch.utils.data import Dataset, DataLoader
+
 
 class DogsDataset(Dataset):
     """Dog breed identification dataset."""
@@ -49,3 +52,30 @@ def split_train_val(root_dir, train_size=0.8, train_transform=None, val_transfor
     val_set = DogsDataset(root_dir, val, val_transform)
 
     return train_set, val_set
+
+
+def prepare_submission():
+    global submission_ds
+    global sub_loader
+    global output_df
+    
+    submission_df = pd.read_csv('./sample_submission.csv')
+    output_df = pd.DataFrame(index=submission_df.index, columns=submission_df.keys() )
+    output_df['id'] = submission_df['id']
+    submission_df['target'] =  [0] * len(submission_df)
+    
+    tdata_transform = transforms.Compose([
+            transforms.Scale(256),
+            transforms.CenterCrop(224),
+            transforms.ToTensor(),
+            transforms.Normalize(mean=[0.485, 0.456, 0.406],
+                                 std=[0.229, 0.224, 0.225])
+    ])
+    
+    submission_ds = DogsDataset('test', submission_df, tdata_transform)
+    
+    sub_loader = DataLoader(submission_ds, batch_size=4,
+                            shuffle=False, num_workers=4)
+    
+    
+
