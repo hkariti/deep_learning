@@ -215,7 +215,7 @@ def main():
     train_fc(model)
     prepare_submission()
     odf = test_sumission(model)
-    odf.to_csv("dogs_id_vgg_16.csv", index=False)
+    odf.to_csv("dogs_id_res34_2fc.csv", index=False)
 
 if __name__ == '__main__':
     main()
