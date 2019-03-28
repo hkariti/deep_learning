@@ -177,6 +177,7 @@ def main():
 
     model = models.resnet34(pretrained=True)
     train_fc(model)
+    return model
 
 if __name__ == '__main__':
     main()
