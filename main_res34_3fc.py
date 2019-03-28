@@ -148,13 +148,16 @@ def train_fc(model):
 
     # Parameters of newly constructed modules have requires_grad=True by default
     num_ftrs = model.fc.in_features
-    H1 = 240
+    H1 = 500
+    H2 = 240
     C = 120
     model.fc = nn.Linear(num_ftrs, H1)
     model = nn.Sequential(
             model, 
             nn.ReLU(),
-            nn.Linear(H1,C)
+            nn.Linear(H1, H2),
+            nn.ReLU(),
+            nn.Linear(H2,C)
             )
 
     model = model.to(device)
