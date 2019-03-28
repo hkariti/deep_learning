@@ -11,7 +11,7 @@ import torchvision
 from torchvision import datasets, models, transforms
 import matplotlib.pyplot as plt
 
-from .dataset import split_train_val
+from .dataset import split_train_val, prepare_submission
 
 dataset_sizes = {}
 dataloaders = {}
@@ -122,6 +122,42 @@ def init_data():
 
     return dataloaders
 
+def test_sumission(model):
+    since = time.time()
+    sub_outputs = []
+    model.train(False)  # Set model to evaluate mode
+    
+    FloatTensor = torch.cuda.FloatTensor if use_gpu else torch.FloatTensor
+    LongTensor = torch.cuda.LongTensor if use_gpu else torch.LongTensor
+    ByteTensor = torch.cuda.ByteTensor if use_gpu else torch.ByteTensor
+    Tensor = FloatTensor
+    
+    # Iterate over data.
+    for data in sub_loader:
+        # get the inputs
+        inputs, labels = data
+
+        inputs = Variable(inputs.type(Tensor))
+        labels = Variable(labels.type(LongTensor))
+
+        # forward
+        outputs = model(inputs)
+        _, preds = torch.max(outputs.data, 1)
+        sub_outputs.append(outputs.data.cpu().numpy())
+
+    sub_outputs = np.concatenate(sub_outputs)
+    for idx,row in enumerate(sub_outputs.astype(float)):
+        sub_outputs[idx] = np.exp(row)/np.sum(np.exp(row))
+
+    output_df.loc[:,1:] = sub_outputs
+        
+    print()
+    time_elapsed = time.time() - since
+    print('Run complete in {:.0f}m {:.0f}s'.format(
+        time_elapsed // 60, time_elapsed % 60))
+
+    return output_df
+
 def finetune(model):
     num_ftrs = model.classifier[6].in_features
     model.classifier[6] = nn.Linear(num_ftrs, 120)
@@ -167,7 +203,11 @@ def main():
     init_data()
 
     model = models.vgg16(pretrained=True)
-    return finetune(model)
+    train_fc(model)
+    
+    prepare_submission()
+    odf = test_sumission(model)
+    odf.to_csv("dogs_id_vgg_16.csv", index=False)
 
 if __name__ == '__main__':
     main()
