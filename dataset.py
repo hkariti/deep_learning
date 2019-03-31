@@ -76,6 +76,7 @@ def prepare_submission():
     
     sub_loader = DataLoader(submission_ds, batch_size=4,
                             shuffle=False, num_workers=4)
+    return sub_loader, output_df
     
     
 

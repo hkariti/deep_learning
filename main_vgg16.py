@@ -19,6 +19,7 @@ image_datasets = {}
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 use_gpu = torch.cuda.is_available()
 sub_loader = {}
+output_df = {}
 
 def train_model(model, criterion, optimizer, scheduler, num_epochs=25):
     since = time.time()
@@ -201,14 +202,17 @@ def train_fc(model):
 
 
 def main():
+    global sub_loader
+    global output_df
     init_data()
 
     model = models.vgg16(pretrained=True)
-    train_fc(model)
-    
-    prepare_submission()
+    train_fc(model)    
+    sub_loader, output_df = prepare_submission()
     odf = test_sumission(model)
     odf.to_csv("dogs_id_vgg_16.csv", index=False)
+    
+    return model
 
 if __name__ == '__main__':
     main()
