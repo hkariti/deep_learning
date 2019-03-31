@@ -18,6 +18,7 @@ dataloaders = {}
 image_datasets = {}
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 use_gpu = torch.cuda.is_available()
+sub_loader = {}
 
 def train_model(model, criterion, optimizer, scheduler, num_epochs=25):
     since = time.time()
