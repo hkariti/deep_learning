@@ -7,4 +7,4 @@ fi
 
 file=$1
 
-cat $file | sed -n '/train/ h; /val/ { H; x; s/\n/ /; p; }' | awk 'BEGIN { OFS=","; print "epoch", "train_loss", "validation_loss" } {print NR-1, $3, $11}'
+cat $file | grep Loss | sed -n '/train/ h; /val/ { H; x; s/\n/ /; p; }' | awk 'BEGIN { OFS=","; print "epoch", "train_loss", "validation_loss" } {print NR-1, $3, $11}'
